@@ -1,4 +1,9 @@
 <h1>Teters table</h1>
-<ag-grid-angular class="ag-theme-alpine" [rowData]="rowData" [columnDefs]="columnDefs"
-  (gridReady)="onGridReady($event)">
-</ag-grid-angular>
+<form [formGroup]="formGroup" (submit)="onSubmit">
+  <label for="name">Your name: </label>
+  <input id="name" type="text" formControlName="name">
+  <ag-grid-angular class="ag-theme-alpine" [rowData]="rowData" [columnDefs]="columnDefs"
+    (gridReady)="onGridReady($event)">
+  </ag-grid-angular>
+  <button type="submit">Save</button>
+</form>

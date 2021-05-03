@@ -3,8 +3,10 @@ h1 {
 }
 
 :host {
-  display: block;
-  height: 100%;
-  width: 100%
-  
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.ag-theme-alpine {
+  height: 500px;
 }
