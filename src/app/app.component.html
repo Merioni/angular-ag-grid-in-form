@@ -1,4 +1,4 @@
 <h1>Teters table</h1>
-<ag-grid-angular
-    (gridReady)="onGridReady($event)">
+<ag-grid-angular class="ag-theme-alpine" [rowData]="rowData" [columnDefs]="columnDefs"
+  (gridReady)="onGridReady($event)">
 </ag-grid-angular>
