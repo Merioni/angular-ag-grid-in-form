@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { GridApi } from "ag-grid-community";
+import { InputCellComponent } from "./input-cell.component";
 
 @Component({
   selector: "my-app",
@@ -13,19 +14,77 @@ export class AppComponent {
     { col1: "def", col2: "ghi", col3: "jkl" },
     { col1: "ghi", col2: "jkl", col3: "mno" }
   ];
-  public columnDefs = [{ field: "col1" }, { field: "col2" }, { field: "col3" }];
+  private columnDefs = [
+    {
+      headerName: "Column 1*",
+      field: "col1",
+      colId: "col1",
+      cellRendererFramework: InputCellComponent
+    },
+    {
+      headerName: "Column 2",
+      field: "col2",
+      colId: "col2",
+      cellRendererFramework: InputCellComponent
+    },
+    {
+      headerName: "Column 3",
+      field: "col3",
+      colId: "col3",
+      cellRendererFramework: InputCellComponent
+    }
+  ];
 
-  public formGroup: FormGroup;
-  public form: FormArray;
+  public form: FormArray = this.fb.array([]);
+  public formGroup: FormGroup = this.fb.group({
+    name: ["", Validators.required],
+    table: this.form
+  });
+  private readonly errorMessages: Map<string, Map<string, string>> = new Map<
+    string,
+    Map<string, string>
+  >([
+    [
+      "col1",
+      new Map<string, string>([
+        ["required", "Please enter a value for this field"]
+      ])
+    ],
+    ["col2", new Map<string, string>([])],
+    [
+      "col3",
+      new Map<string, string>([
+        ["minlength", "Please enter at least 2 characters"]
+      ])
+    ]
+  ]);
+  public gridOptions = {
+    columnDefs: this.columnDefs,
+    context: {
+      formArray: this.form,
+      errorMessages: this.errorMessages
+    }
+  };
 
   private api: GridApi;
 
-  constructor(private readonly fb: FormBuilder) {
-    this.formGroup = this.fb.group({
-      name: ["", Validators.required],
-      table: this.form
+  constructor(private readonly fb: FormBuilder) {}
+
+  ngOnInit() {
+    // Whenever form state changes evaluate height of cells
+    // If error message needs to be displayed, increase cell height
+    this.form.statusChanges.subscribe(() => {
+      if (!!this.api) {
+        for (let i = 0; i < this.form.length; i++) {
+          if (this.form.at(i).invalid) {
+            this.api.getRowNode(i.toString()).setRowHeight(64);
+          } else {
+            this.api.getRowNode(i.toString()).setRowHeight(48);
+          }
+        }
+        this.api.onRowHeightChanged();
+      }
     });
-    this.form = this.fb.array([]);
   }
 
   refreshTable() {
@@ -39,6 +98,7 @@ export class AppComponent {
         })
       );
     });
+    this.api.refreshCells({ force: true });
   }
 
   onGridReady(params) {
@@ -47,6 +107,6 @@ export class AppComponent {
   }
 
   onSubmit(params) {
-    console.log("submit pressed", params);
+    console.log("submit pressed", this.formGroup.value);
   }
 }

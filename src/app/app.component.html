@@ -1,9 +1,12 @@
 <h1>Teters table</h1>
-<form [formGroup]="formGroup" (submit)="onSubmit">
-  <label for="name">Your name: </label>
-  <input id="name" type="text" formControlName="name">
-  <ag-grid-angular class="ag-theme-alpine" [rowData]="rowData" [columnDefs]="columnDefs"
+<form [formGroup]="formGroup" (submit)="onSubmit($event)">
+  <mat-form-field floatLabel="always" appearance="legacy">
+    <mat-label>Name</mat-label>
+    <input matInput required type="text" formControlName="name">
+    <mat-error>Name is mandatory</mat-error>
+  </mat-form-field>
+  <ag-grid-angular class="ag-theme-alpine" [rowData]="rowData" [gridOptions]="gridOptions"
     (gridReady)="onGridReady($event)">
   </ag-grid-angular>
-  <button type="submit">Save</button>
+  <button mat-button type="submit">Save</button>
 </form>

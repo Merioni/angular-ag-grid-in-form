@@ -1,0 +1,6 @@
+<mat-form-field *ngIf="control" floatLabel="always">
+  <input
+    matInput
+    [formControl]="control">
+  <mat-error>{{errorMessage}}</mat-error>
+</mat-form-field>
